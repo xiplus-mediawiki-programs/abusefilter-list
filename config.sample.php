@@ -6,7 +6,7 @@ $C["pass"] = "";
 
 $C["outpage"] = "User:Xiplus/AF";
 
-$C["summary_prefix"] = "產生防濫用過濾器列表：";
+$C["summary"] = "產生防濫用過濾器列表";
 
 $C["text1"] = "<!--af table start-->";
 $C["text2"] = "<!--af table end-->";

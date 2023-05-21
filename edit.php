@@ -125,7 +125,7 @@ $start = strpos($text, $C["text3"]);
 $end = strpos($text, $C["text4"]);
 $text = substr($text, 0, $start) . $C["text3"] . "~~~~~" . substr($text, $end);
 
-$summary = $C["summary_prefix"] . "更新";
+$summary = $C["summary"];
 $post = array(
 	"action" => "edit",
 	"format" => "json",
