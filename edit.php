@@ -23,7 +23,7 @@ if (isset($options["t"]) || isset($options["test"])) {
 	$C["test"] = true;
 }
 
-if ($C["test"]) {
+if (!empty($C["test"])) {
 	echo "test mode on.\n";
 }
 
@@ -61,8 +61,10 @@ foreach ($res["query"]["abusefilters"] as $AF) {
 	$description = preg_replace("/{{([^}]+)}}/", "{{((}}$1{{))}}", $description);
 	$description = preg_replace("/\[\[([^}]+)\]\]/", "{{!((}}$1{{))!}}", $description);
 
+	if (!is_array($AF["actions"])) {
+		$AF["actions"] = $AF["actions"] === "" ? [] : explode(',', $AF["actions"]);
+	}
 	$action = $AF["actions"];
-	$action = explode(',', $action);
 	array_walk($action, 'afactions');
 	$action = implode('、', $action);
 
@@ -87,7 +89,7 @@ foreach ($res["query"]["abusefilters"] as $AF) {
 	$outcsv[] = [
 		$AF["id"],
 		$AF["description"],
-		$AF["actions"],
+		implode(',', $AF["actions"]),
 		(isset($AF["enabled"]) ? "enabled" : (isset($AF["deleted"]) ? "deleted" : "disabled")),
 		(isset($AF["private"]) ? "hidden" : "unhidden"),
 		$AF["hits"],
@@ -97,7 +99,7 @@ $out .= '|}';
 
 $fp = fopen(__DIR__ . "/abusefilter_list.csv", "w");
 foreach ($outcsv as $row) {
-	fputcsv($fp, $row);
+	fputcsv($fp, $row, ",", "\"", "\\");
 }
 fclose($fp);
 
@@ -136,7 +138,7 @@ $post = array(
 	"token" => $edittoken,
 );
 echo "edit " . $C["outpage"] . " summary=" . $summary . "\n";
-if (!$C["test"]) {
+if (empty($C["test"])) {
 	$res = cURL($C["wikiapi"], $post);
 } else {
 	$res = false;
