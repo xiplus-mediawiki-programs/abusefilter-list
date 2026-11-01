@@ -68,7 +68,10 @@ foreach ($res["query"]["abusefilters"] as $AF) {
 	array_walk($action, 'afactions');
 	$action = implode('、', $action);
 
-	if ($AF["hits"] > 1000) {
+	if (!isset($AF["hits"])) {
+		$AF["hits"] = "";
+		$AFhitstext = "命中次數不公開";
+	} else if ($AF["hits"] > 1000) {
 		$AF["hits"] = (floor($AF["hits"] / 1000) * 1000);
 		$AFhitstext = $AF["hits"] . " 次以上命中";
 	} else if ($AF["hits"] > 100) {
@@ -84,7 +87,7 @@ foreach ($res["query"]["abusefilters"] as $AF) {
 |' . $action . '
 |' . (isset($AF["enabled"]) ? "{{int:abusefilter-enabled}}" : (isset($AF["deleted"]) ? "{{int:abusefilter-deleted}}" : "{{int:abusefilter-disabled}}")) . '
 |' . (isset($AF["private"]) ? "{{int:abusefilter-hidden}}" : "{{int:abusefilter-unhidden}}") . '
-|data-sort-value=' . $AF["hits"] . '| [{{fullurl:Special:AbuseLog|wpSearchFilter=' . $AF["id"] . '}} ' . $AFhitstext . ']
+|data-sort-value=' . ($AF["hits"] === "" ? -1 : $AF["hits"]) . '| [{{fullurl:Special:AbuseLog|wpSearchFilter=' . $AF["id"] . '}} ' . $AFhitstext . ']
 ';
 	$outcsv[] = [
 		$AF["id"],
